@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modelo de Indicadores Multidimensionales - Alberto Acosta</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        institucional: '#0f172a', // Azul muy oscuro/pizarra
+                        unellez: '#e67e22'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Transiciones fluidas para barras de progreso y tarjetas */
+        .transition-bar { transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.5s ease; }
+        .card-hover { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .card-hover:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .input-field { transition: border-color 0.2s ease, box-shadow 0.2s ease; }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col font-sans">
+
+    <header class="bg-white shadow-md border-b-4 border-slate-800 py-6 px-4 sm:px-8 flex flex-col md:flex-row justify-between items-center gap-4 z-10 relative">
+        <!-- Logo UNELLEZ -->
+        <div class="flex-shrink-0">
+            <img src="image_d461fb.png" alt="UNELLEZ" class="h-24 md:h-28 object-contain" onerror="this.onerror=null; this.src='https://placehold.co/200x100/ffffff/e67e22?text=UNELLEZ'">
+        </div>
+        
+        <!-- Título Central -->
+        <div class="text-center flex-grow">
+            <h2 class="text-xs md:text-sm font-bold tracking-widest text-slate-500 uppercase mb-1">
+                Universidad Nacional Experimental de los Llanos Occidentales Ezequiel Zamora
+            </h2>
+            <h1 class="text-xl md:text-2xl font-extrabold text-institucional leading-tight mb-2">
+                Modelo de Indicadores Multidimensionales para el Control de Proyectos
+            </h1>
+            <div class="inline-block bg-slate-100 px-4 py-1 rounded-full border border-slate-200">
+                <p class="text-sm font-semibold text-slate-700">Tesis Doctoral en el Doctorado de Gerencia Avanzada</p>
+                <p class="text-xs text-slate-500 mt-0.5">Programa de Estudios Avanzados (PRESAV)</p>
+            </div>
+        </div>
+
+        <!-- Logo PRESAV -->
+        <div class="flex-shrink-0">
+            <img src="image_d46278.png" alt="PRESAV" class="h-20 md:h-24 object-contain" onerror="this.onerror=null; this.src='https://placehold.co/200x100/ffffff/0f172a?text=PRESAV'">
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl mx-auto w-full p-4 md:p-8">
+        
+        <div class="mb-6 bg-blue-50 border-l-4 border-blue-600 p-4 rounded-r-lg shadow-sm">
+            <p class="text-sm text-blue-800 flex items-start">
+                <i class="fa-solid fa-circle-info mt-1 mr-3 text-blue-600"></i>
+                <span><strong>Simulador Gerencial:</strong> Ingrese los datos de ejecución fáctica en la columna izquierda. El algoritmo procesará automáticamente las métricas según las metodologías EVM, Lean Construction y normativas COVENIN, generando alertas predictivas a la derecha.</span>
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- PANEL IZQUIERDO: INPUTS -->
+            <div class="lg:col-span-5 space-y-6">
+                
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="bg-slate-800 px-6 py-4">
+                        <h2 class="text-lg font-bold text-white flex items-center">
+                            <i class="fa-solid fa-keyboard mr-2 text-slate-300"></i> 1. Ingreso de Datos Fácticos
+                        </h2>
+                    </div>
+                    
+                    <div class="p-6 space-y-5">
+                        <!-- EVM -->
+                        <div class="space-y-4">
+                            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 pb-2"><i class="fa-solid fa-coins mr-1"></i> Dimensión Financiera (EVM)</h3>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700">Valor Planificado (PV)</label>
+                                <p class="text-[11px] text-slate-500 mb-1">¿Cuánto presupuesto estimamos gastar hasta la fecha actual?</p>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><span class="text-slate-400">$</span></div>
+                                    <input type="number" id="pv" placeholder="Ej. 50000" oninput="calcularDashboard()" class="input-field w-full pl-8 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700">Costo Real (AC)</label>
+                                <p class="text-[11px] text-slate-500 mb-1">¿Cuánto dinero ha salido realmente de caja para pagar la obra?</p>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><span class="text-slate-400">$</span></div>
+                                    <input type="number" id="ac" placeholder="Ej. 52000" oninput="calcularDashboard()" class="input-field w-full pl-8 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700">Valor Ganado (EV)</label>
+                                <p class="text-[11px] text-slate-500 mb-1">A nivel financiero, ¿cuánto vale el avance físico real que logramos?</p>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><span class="text-slate-400">$</span></div>
+                                    <input type="number" id="ev" placeholder="Ej. 48000" oninput="calcularDashboard()" class="input-field w-full pl-8 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Lean -->
+                        <div class="space-y-4 pt-2">
+                            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 pb-2"><i class="fa-solid fa-helmet-safety mr-1"></i> Dimensión Operativa (Lean)</h3>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-700">Tareas Prog.</label>
+                                    <p class="text-[10px] text-slate-500 mb-1">Promesa semanal</p>
+                                    <input type="number" id="tp" placeholder="Ej. 20" oninput="calcularDashboard()" class="input-field w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-700">Tareas Reales</label>
+                                    <p class="text-[10px] text-slate-500 mb-1">Logro al 100%</p>
+                                    <input type="number" id="tr" placeholder="Ej. 18" oninput="calcularDashboard()" class="input-field w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bioética -->
+                        <div class="space-y-4 pt-2">
+                            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 pb-2"><i class="fa-solid fa-hand-holding-heart mr-1"></i> Dimensión Técnica / Bioética</h3>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700">Total de Evaluaciones</label>
+                                <p class="text-[11px] text-slate-500 mb-1">Suma de ensayos de laboratorio y encuestas post-ocupación</p>
+                                <input type="number" id="total_eval" placeholder="Ej. 10" oninput="calcularDashboard()" class="input-field w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none mb-3">
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-700">Ensayos OK</label>
+                                    <p class="text-[10px] text-slate-500 mb-1">Pruebas aprobadas</p>
+                                    <input type="number" id="ensayos_ok" placeholder="Ej. 5" oninput="calcularDashboard()" class="input-field w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-700">Familias POE OK</label>
+                                    <p class="text-[10px] text-slate-500 mb-1">Satisfacción de vida</p>
+                                    <input type="number" id="poe_ok" placeholder="Ej. 5" oninput="calcularDashboard()" class="input-field w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- PANEL DERECHO: OUTPUTS -->
+            <div class="lg:col-span-7 space-y-4">
+                <div class="flex items-center justify-between mb-2">
+                    <h2 class="text-xl font-extrabold text-slate-800 flex items-center">
+                        <i class="fa-solid fa-chart-line mr-2 text-institucional"></i> 2. Tablero de Alertas (Resultados)
+                    </h2>
+                    <span class="text-xs font-medium text-slate-500 bg-slate-200 px-2 py-1 rounded">Procesamiento en tiempo real</span>
+                </div>
+
+                <!-- Tarjeta CPI -->
+                <div id="card-cpi" class="card-hover bg-white rounded-xl shadow-sm border border-slate-200 p-5 relative overflow-hidden flex flex-col justify-between h-32">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="text-slate-800 font-bold text-lg"><i class="fa-solid fa-money-bill-trend-up text-slate-400 mr-2" id="icon-cpi"></i>Desempeño del Costo (CPI)</h3>
+                            <p class="text-xs text-slate-500 mt-0.5">¿Es eficiente nuestra inversión? (Fórmula: EV / AC)</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-3xl font-black text-slate-300" id="val-cpi">0.00</span>
+                        </div>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-2.5 mt-auto mb-2">
+                        <div class="h-2.5 rounded-full bg-slate-300 transition-bar w-0" id="bar-cpi"></div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-[11px] font-bold px-2 py-1 rounded bg-slate-100 text-slate-500 tracking-wider uppercase" id="status-cpi">Esperando datos</span>
+                        <span class="text-[10px] text-slate-400 font-medium">Meta Óptima: ≥ 1.00</span>
+                    </div>
+                </div>
+
+                <!-- Tarjeta CV -->
+                <div id="card-cv" class="card-hover bg-white rounded-xl shadow-sm border border-slate-200 p-5 relative overflow-hidden flex flex-col justify-between h-32">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="text-slate-800 font-bold text-lg"><i class="fa-solid fa-scale-balanced text-slate-400 mr-2" id="icon-cv"></i>Varianza del Costo (CV)</h3>
+                            <p class="text-xs text-slate-500 mt-0.5">¿Nos falta o nos sobra dinero en caja? (EV - AC)</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-3xl font-black text-slate-300" id="val-cv">$ 0.00</span>
+                        </div>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-2.5 mt-auto mb-2">
+                         <!-- CV es absoluto, barra representa visualmente el impacto -->
+                        <div class="h-2.5 rounded-full bg-slate-300 transition-bar w-0" id="bar-cv"></div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-[11px] font-bold px-2 py-1 rounded bg-slate-100 text-slate-500 tracking-wider uppercase" id="status-cv">Esperando datos</span>
+                        <span class="text-[10px] text-slate-400 font-medium">Meta Óptima: Valor ≥ 0</span>
+                    </div>
+                </div>
+
+                <!-- Tarjeta SPI -->
+                <div id="card-spi" class="card-hover bg-white rounded-xl shadow-sm border border-slate-200 p-5 relative overflow-hidden flex flex-col justify-between h-32">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="text-slate-800 font-bold text-lg"><i class="fa-regular fa-clock text-slate-400 mr-2" id="icon-spi"></i>Desempeño del Cronograma (SPI)</h3>
+                            <p class="text-xs text-slate-500 mt-0.5">¿A qué velocidad real estamos construyendo? (EV / PV)</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-3xl font-black text-slate-300" id="val-spi">0.00</span>
+                        </div>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-2.5 mt-auto mb-2">
+                        <div class="h-2.5 rounded-full bg-slate-300 transition-bar w-0" id="bar-spi"></div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-[11px] font-bold px-2 py-1 rounded bg-slate-100 text-slate-500 tracking-wider uppercase" id="status-spi">Esperando datos</span>
+                        <span class="text-[10px] text-slate-400 font-medium">Meta Óptima: ≥ 1.00</span>
+                    </div>
+                </div>
+
+                <!-- Tarjeta PPC -->
+                <div id="card-ppc" class="card-hover bg-white rounded-xl shadow-sm border border-slate-200 p-5 relative overflow-hidden flex flex-col justify-between h-32">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="text-slate-800 font-bold text-lg"><i class="fa-solid fa-users-gear text-slate-400 mr-2" id="icon-ppc"></i>Porcentaje de Plan Completado (PPC)</h3>
+                            <p class="text-xs text-slate-500 mt-0.5">¿Qué tan confiable es nuestra cuadrilla? (Reales / Plan)</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-3xl font-black text-slate-300" id="val-ppc">0 %</span>
+                        </div>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-2.5 mt-auto mb-2">
+                        <div class="h-2.5 rounded-full bg-slate-300 transition-bar w-0" id="bar-ppc"></div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-[11px] font-bold px-2 py-1 rounded bg-slate-100 text-slate-500 tracking-wider uppercase" id="status-ppc">Esperando datos</span>
+                        <span class="text-[10px] text-slate-400 font-medium">Meta Óptima: ≥ 85%</span>
+                    </div>
+                </div>
+
+                <!-- Tarjeta IHB -->
+                <div id="card-ihb" class="card-hover bg-white rounded-xl shadow-sm border border-slate-200 p-5 relative overflow-hidden flex flex-col justify-between h-32">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="text-slate-800 font-bold text-lg"><i class="fa-solid fa-house-medical-circle-check text-slate-400 mr-2" id="icon-ihb"></i>Índice de Habitabilidad Bioética (IHB)</h3>
+                            <p class="text-xs text-slate-500 mt-0.5">Garantía de protección técnica y humana (Ensayos + POE)</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-3xl font-black text-slate-300" id="val-ihb">0 %</span>
+                        </div>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-2.5 mt-auto mb-2">
+                        <div class="h-2.5 rounded-full bg-slate-300 transition-bar w-0" id="bar-ihb"></div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-[11px] font-bold px-2 py-1 rounded bg-slate-100 text-slate-500 tracking-wider uppercase" id="status-ihb">Esperando datos</span>
+                        <span class="text-[10px] text-slate-400 font-medium">Exigencia Ética: 100%</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-institucional text-slate-400 py-6 text-center mt-auto border-t-4 border-unellez">
+        <div class="max-w-7xl mx-auto px-4">
+            <p class="text-sm">Instrumento gerencial diseñado para la toma de decisiones basada en evidencia fáctica.</p>
+            <p class="text-sm font-semibold mt-2 text-white">Elaborado por el autor: Alberto Acosta</p>
+            <p class="text-xs mt-1 opacity-75">San Carlos, Cojedes, Venezuela - 2026</p>
+        </div>
+    </footer>
+
+    <script>
+        // Formateador de moneda
+        const formatter = new Intl.NumberFormat('es-VE', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 });
+
+        // Función auxiliar para actualizar la UI visualmente
+        function actualizarUI(idBase, valorStr, estadoStr, nivel, barPercentage) {
+            const card = document.getElementById(`card-${idBase}`);
+            const valObj = document.getElementById(`val-${idBase}`);
+            const statusObj = document.getElementById(`status-${idBase}`);
+            const barObj = document.getElementById(`bar-${idBase}`);
+            const iconObj = document.getElementById(`icon-${idBase}`);
+
+            // Limpiar clases previas
+            card.className = "card-hover bg-white rounded-xl shadow-sm border p-5 relative overflow-hidden flex flex-col justify-between h-32 transition-all duration-300";
+            valObj.className = "text-3xl font-black";
+            statusObj.className = "text-[11px] font-bold px-2 py-1 rounded tracking-wider uppercase";
+            iconObj.className = iconObj.className.replace(/text-(slate|emerald|amber|rose)-(400|500|600)/g, '');
+
+            valObj.innerText = valorStr;
+            statusObj.innerText = estadoStr;
+            
+            // Limitar barra a 100% visualmente
+            const visualWidth = Math.min(Math.max(barPercentage, 0), 100);
+            barObj.style.width = `${visualWidth}%`;
+
+            if (nivel === 'verde') {
+                card.classList.add('border-emerald-500', 'bg-emerald-50/30');
+                valObj.classList.add('text-emerald-700');
+                statusObj.classList.add('bg-emerald-100', 'text-emerald-700');
+                barObj.className = "h-2.5 rounded-full transition-bar bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]";
+                iconObj.classList.add('text-emerald-600');
+            } else if (nivel === 'amarillo') {
+                card.classList.add('border-amber-400', 'bg-amber-50/30');
+                valObj.classList.add('text-amber-700');
+                statusObj.classList.add('bg-amber-100', 'text-amber-700');
+                barObj.className = "h-2.5 rounded-full transition-bar bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.6)]";
+                iconObj.classList.add('text-amber-500');
+            } else if (nivel === 'rojo') {
+                card.classList.add('border-rose-500', 'bg-rose-50/30');
+                valObj.classList.add('text-rose-700');
+                statusObj.classList.add('bg-rose-100', 'text-rose-700');
+                barObj.className = "h-2.5 rounded-full transition-bar bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.6)]";
+                iconObj.classList.add('text-rose-500');
+            } else {
+                card.classList.add('border-slate-200');
+                valObj.classList.add('text-slate-300');
+                statusObj.classList.add('bg-slate-100', 'text-slate-500');
+                barObj.className = "h-2.5 rounded-full transition-bar bg-slate-300";
+                iconObj.classList.add('text-slate-400');
+            }
+        }
+
+        // Función Principal del Algoritmo
+        function calcularDashboard() {
+            // Entradas
+            const pv = parseFloat(document.getElementById('pv').value) || 0;
+            const ac = parseFloat(document.getElementById('ac').value) || 0;
+            const ev = parseFloat(document.getElementById('ev').value) || 0;
+            const tp = parseFloat(document.getElementById('tp').value) || 0;
+            const tr = parseFloat(document.getElementById('tr').value) || 0;
+            const total_eval = parseFloat(document.getElementById('total_eval').value) || 0;
+            const ensayos_ok = parseFloat(document.getElementById('ensayos_ok').value) || 0;
+            const poe_ok = parseFloat(document.getElementById('poe_ok').value) || 0;
+
+            // 1. CPI
+            if (ac > 0) {
+                const cpi = (ev / ac);
+                let nivel = 'rojo', status = 'Sobrecosto Severo';
+                if (cpi >= 1.00) { nivel = 'verde'; status = '✓ Eficiente (OK)'; }
+                else if (cpi >= 0.95) { nivel = 'amarillo'; status = '⚠ Alerta Temprana'; }
+                
+                // Representación de barra: 1.00 CPI = 75% ancho (para permitir ver sobre-eficiencia)
+                const barWidth = (cpi / 1.0) * 80; 
+                actualizarUI('cpi', cpi.toFixed(2), status, nivel, barWidth);
+            } else {
+                actualizarUI('cpi', '0.00', 'Esperando datos', 'default', 0);
+            }
+
+            // 2. CV
+            if (ev > 0 || ac > 0) {
+                const cv = ev - ac;
+                let nivel = cv >= 0 ? 'verde' : 'rojo';
+                let status = cv >= 0 ? '✓ Ahorro / A la par' : '❌ Déficit de Capital';
+                
+                // Barra para CV: Llenado simbólico basado en salud financiera
+                let barWidth = 0;
+                if(cv >= 0) barWidth = 100; // Verde completo
+                else barWidth = Math.max(100 - (Math.abs(cv) / ac * 100), 10); // Disminuye mientras peor es el déficit
+
+                actualizarUI('cv', formatter.format(cv).replace('USD', '$'), status, nivel, barWidth);
+            } else {
+                actualizarUI('cv', '$ 0.00', 'Esperando datos', 'default', 0);
+            }
+
+            // 3. SPI
+            if (pv > 0) {
+                const spi = (ev / pv);
+                let nivel = 'rojo', status = '❌ Retraso Crítico';
+                if (spi >= 1.00) { nivel = 'verde'; status = '✓ Adelanto / A tiempo'; }
+                else if (spi >= 0.90) { nivel = 'amarillo'; status = '⚠ Retraso Moderado'; }
+                
+                const barWidth = (spi / 1.0) * 80;
+                actualizarUI('spi', spi.toFixed(2), status, nivel, barWidth);
+            } else {
+                actualizarUI('spi', '0.00', 'Esperando datos', 'default', 0);
+            }
+
+            // 4. PPC
+            if (tp > 0) {
+                let ppc = (tr / tp) * 100;
+                if (ppc > 100) ppc = 100; // Cap a 100% lógico
+                let nivel = 'rojo', status = '❌ Falla de Cuadrilla';
+                if (ppc >= 85) { nivel = 'verde'; status = '✓ Flujo Confiable'; }
+                else if (ppc >= 70) { nivel = 'amarillo'; status = '⚠ Interrupciones'; }
+                
+                actualizarUI('ppc', ppc.toFixed(1) + ' %', status, nivel, ppc);
+            } else {
+                actualizarUI('ppc', '0 %', 'Esperando datos', 'default', 0);
+            }
+
+            // 5. IHB
+            if (total_eval > 0) {
+                let sumaOK = ensayos_ok + poe_ok;
+                if (sumaOK > total_eval) sumaOK = total_eval; // Prevenir errores de digitación
+                const ihb = (sumaOK / total_eval) * 100;
+                
+                let nivel = ihb >= 100 ? 'verde' : 'rojo';
+                let status = ihb >= 100 ? '✓ Cumplimiento Ético' : '❌ No Conformidades (Riesgo)';
+                
+                actualizarUI('ihb', ihb.toFixed(1) + ' %', status, nivel, ihb);
+            } else {
+                actualizarUI('ihb', '0 %', 'Esperando datos', 'default', 0);
+            }
+        }
+    </script>
+</body>
+</html>
